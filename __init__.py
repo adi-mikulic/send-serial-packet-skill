@@ -54,11 +54,11 @@ class SendSerialPacketSkill(MycroftSkill):
     #       self.count -= 1
     #   self.speak_dialog("count.is.now", data={"count": self.count})
 
-    @intent_handler(IntentBuilder("ProtocolIntent").require("Protocols"))
+    @intent_handler(IntentBuilder("ProtocolIntent").require("Protocols").require("Format"))
     def handle_select_protocol_intent(self, message):
-        if message.data["Protocols"] == "S P I" or "SPI":
+        if message.data["Format"] == "S P I" or "SPI":
             self.port = [0,2]
-        elif message.data["Protocols"] == "UART" or "U art":
+        elif message.data["Format"] == "UART" or "U art":
             self.port = [0,1]
         else:
             self.port = [0,3]
