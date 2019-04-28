@@ -14,7 +14,6 @@ from mycroft.util.log import LOG
 # Each skill is contained within its own class, which inherits base methods
 # from the MycroftSkill class.  You extend this class as shown below.
 
-# TODO: Change "Template" to a unique name for your skill
 class SendSerialPacketSkill(MycroftSkill):
 
     # The constructor of the skill, which calls MycroftSkill's constructor
@@ -24,7 +23,6 @@ class SendSerialPacketSkill(MycroftSkill):
         # Initialize working variables used within the skill.
         # PYTHON_NOTE: Arrays do not exist within python, instead a data
         # structure known as a "list" has similar functionality.
-        self.count = 0
         self.payload = []
         self.payload_size = 0
         self.flag = []
@@ -41,22 +39,22 @@ class SendSerialPacketSkill(MycroftSkill):
     #   'Hello world'
     #   'Howdy you great big world'
     #   'Greetings planet earth'
-    @intent_handler(IntentBuilder("").require("Hello").require("World"))
-    def handle_hello_world_intent(self, message):
+    #@intent_handler(IntentBuilder("").require("Hello").require("World"))
+    #def handle_hello_world_intent(self, message):
         # In this case, respond by simply speaking a canned response.
         # Mycroft will randomly speak one of the lines from the file
         #    dialogs/en-us/hello.world.dialog
-        self.speak_dialog("hello.world")
+    #    self.speak_dialog("hello.world")
 
-    @intent_handler(IntentBuilder("").require("Count").require("Dir"))
-    def handle_count_intent(self, message):
-        if message.data["Dir"] == "up":
-            self.count += 1
-        else:  # assume "down"
-            self.count -= 1
-        self.speak_dialog("count.is.now", data={"count": self.count})
+    #@intent_handler(IntentBuilder("").require("Count").require("Dir"))
+    #def handle_count_intent(self, message):
+    #    if message.data["Dir"] == "up":
+    #        self.count += 1
+    #    else:  # assume "down"
+    #       self.count -= 1
+    #   self.speak_dialog("count.is.now", data={"count": self.count})
 
-    @intent_handler(IntentBuilder("").require("Protocols"))
+    @intent_handler(IntentBuilder("ProtocolIntent").require("Protocols"))
     def handle_select_protocol_intent(self, message):
         if message.data["Protocols"] == "S P I" or "SPI":
             self.port = [0,2]
@@ -76,8 +74,8 @@ class SendSerialPacketSkill(MycroftSkill):
     # need to implement stop, you should return True to indicate you handled
     # it.
     #
-    # def stop(self):
-    #    return False
+    def stop(self):
+        return True
 
 # The "create_skill()" method is used to create an instance of the skill.
 # Note that it's outside the class itself.
