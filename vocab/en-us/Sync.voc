@@ -1,0 +1,9 @@
+sync
+sync byte
+sync nibble
+add sync
+add sync byte
+add sync nibble
+set sync
+set sync byte
+set sync nibble

@@ -23,10 +23,18 @@ class SendSerialPacketSkill(MycroftSkill):
         # Initialize working variables used within the skill.
         # PYTHON_NOTE: Arrays do not exist within python, instead a data
         # structure known as a "list" has similar functionality.
-        self.payload = []
-        self.payload_size = 0
-        self.flag = []
-        self.port = []
+        #
+        self.payload = []               # Message payload
+        self.payload_size = 10          # Size of the payload in bytes
+        self.comm_protocol = []         # User-selected communication protocol identifier
+        self.port = []                  # User or system selected port to transmit data
+
+        self.sync_bytes = []            # Sync bytes (if necessary)
+        self.sync_loop_control = 0
+
+        self.str_to_int = 0              # Variable used to convert string input to integer values
+
+        self.serial_packet = []         # Complete data packet to send
 
     # The "handle_xxxx_intent" function is triggered by Mycroft when the
     # skill's intent is matched.  The intent is defined by the IntentBuilder()
@@ -39,30 +47,25 @@ class SendSerialPacketSkill(MycroftSkill):
     #   'Hello world'
     #   'Howdy you great big world'
     #   'Greetings planet earth'
-    #@intent_handler(IntentBuilder("").require("Hello").require("World"))
-    #def handle_hello_world_intent(self, message):
-        # In this case, respond by simply speaking a canned response.
-        # Mycroft will randomly speak one of the lines from the file
-        #    dialogs/en-us/hello.world.dialog
-    #    self.speak_dialog("hello.world")
-
-    #@intent_handler(IntentBuilder("").require("Count").require("Dir"))
-    #def handle_count_intent(self, message):
-    #    if message.data["Dir"] == "up":
-    #        self.count += 1
-    #    else:  # assume "down"
-    #       self.count -= 1
-    #   self.speak_dialog("count.is.now", data={"count": self.count})
 
     @intent_handler(IntentBuilder("ProtocolIntent").require("Protocols").require("Format"))
     def handle_select_protocol_intent(self, message):
         if message.data["Format"] == "s p i" or "spi":
-            self.port = [0,2]
+            self.comm_protocol = [0,2]
         elif message.data["Format"] == "uart" or "u art":
-            self.port = 1
+            self.comm_protocol = [0,1]
         else:
-            self.port = 3
-        self.speak_dialog("selected.port", data={"port": self.port})
+            self.comm_protocol = [0,3]
+        self.speak_dialog("selected.port", data={"comm_protocol": self.comm_protocol})
+
+    @intent_handler(IntentBuilder("SyncBytesIntent").require("Sync"))
+    def handle_sync_byte_intent(self, message):
+        while self.sync_loop_control < 4:
+            self.str_to_int = int(message,16)
+            self.sync_bytes.append(hex(self.str_to_int))
+            self.sync_loop_control += 1
+            self.speak_dialog("extend.sync", data={"sync_loop_control": self.sync_loop_control})
+        self.speak_dialog("complete.sync", data={"sync_bytes": self.sync_bytes})
 
     # @intent_handler(IntentBuilder("").require("Data").require("Packet"))
     # def handle_serial_intent(self, message):
