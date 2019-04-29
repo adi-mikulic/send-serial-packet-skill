@@ -26,7 +26,7 @@ class SendSerialPacketSkill(MycroftSkill):
         self.payload = []
         self.payload_size = 0
         self.flag = []
-        self.port = []
+        self.port = 0
 
     # The "handle_xxxx_intent" function is triggered by Mycroft when the
     # skill's intent is matched.  The intent is defined by the IntentBuilder()
@@ -57,11 +57,11 @@ class SendSerialPacketSkill(MycroftSkill):
     @intent_handler(IntentBuilder("ProtocolIntent").require("Protocols").require("Format"))
     def handle_select_protocol_intent(self, message):
         if message.data["Format"] == "s p i" or "spi":
-            self.port = [0,2]
+            self.port = 2
         elif message.data["Format"] == "uart" or "u art":
-            self.port = [0,1]
+            self.port = 1
         else:
-            self.port = [0,3]
+            self.port = 3
         self.speak_dialog("data.format", data={"port": self.port})
 
     # @intent_handler(IntentBuilder("").require("Data").require("Packet"))
