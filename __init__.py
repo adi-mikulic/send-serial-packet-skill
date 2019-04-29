@@ -50,18 +50,20 @@ class SendSerialPacketSkill(MycroftSkill):
 
     @intent_handler(IntentBuilder("ProtocolIntent").require("Protocols").require("Format"))
     def handle_select_protocol_intent(self, message):
-        if message.data["Format"] == "s p i" or "spi":
+        if message.data["Format"] == "spi":
             self.comm_protocol = [0,2]
-        elif message.data["Format"] == "uart" or "u art":
+        elif message.data["Format"] == "uart":
             self.comm_protocol = [0,1]
-        else:
+        elif message.data["Format"] == "i squared c":
             self.comm_protocol = [0,3]
-        self.speak_dialog("selected.port", data={"comm_protocol": self.comm_protocol})
+        else:
+            self.comm_protocol = [0,0]
+        self.speak_dialog("selected.protocol", data={"comm_protocol": self.comm_protocol})
 
     @intent_handler(IntentBuilder("SyncBytesIntent").require("Sync"))
     def handle_sync_byte_intent(self, message):
         while self.sync_loop_control < 4:
-            self.str_to_int = int(message,16)
+            self.str_to_int = int(message.data,16)
             self.sync_bytes.append(hex(self.str_to_int))
             self.sync_loop_control += 1
             self.speak_dialog("extend.sync", data={"sync_loop_control": self.sync_loop_control})
