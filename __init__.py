@@ -56,9 +56,9 @@ class SendSerialPacketSkill(MycroftSkill):
 
     @intent_handler(IntentBuilder("ProtocolIntent").require("Protocols").require("Format"))
     def handle_select_protocol_intent(self, message):
-        if message.data["Format"] == "S P I" or "SPI":
+        if message.data["Format"] == "s p i" or "spi":
             self.port = [0,2]
-        elif message.data["Format"] == "UART" or "U art":
+        elif message.data["Format"] == "uart" or "u art":
             self.port = [0,1]
         else:
             self.port = [0,3]
