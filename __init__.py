@@ -77,7 +77,7 @@ class SendSerialPacketSkill(MycroftSkill):
     
     @intent_handler(IntentBuilder("PortSelectIntent").require("PortName"))
     def handle_port_select_intent(self, message):
-        self.ser.baudrate = 19200
+        self.ser.baudrate = 9600
         self.ser.port = 'COM1'
         self.speak_dialog("port.config", data={"port_name": self.ser.name})
 
@@ -104,10 +104,6 @@ class SendSerialPacketSkill(MycroftSkill):
         self.speak_dialog("send.serial.data")
         self.ser.close()
 
-    # @intent_handler(IntentBuilder("").require("Data").require("Packet"))
-    # def handle_serial_intent(self, message):
-
-    #    self.speak_dialog("send.serial.data")
     # The "stop" method defines what Mycroft does when told to stop during
     # the skill's execution. In this case, since the skill's functionality
     # is extremely simple, there is no need to override it.  If you DO
