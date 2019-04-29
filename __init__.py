@@ -60,10 +60,10 @@ class SendSerialPacketSkill(MycroftSkill):
             self.comm_protocol = [0,0]
         self.speak_dialog("selected.protocol", data={"comm_protocol": self.comm_protocol})
 
-    @intent_handler(IntentBuilder("SyncBytesIntent").require("Sync"))
+    @intent_handler(IntentBuilder("SyncBytesIntent").require("Sync").require("HexNum"))
     def handle_sync_byte_intent(self, message):
         while self.sync_loop_control < 4:
-            self.str_to_int = int(message.data,16)
+            self.str_to_int = int(message.data["HexNum"],16)
             self.sync_bytes.append(hex(self.str_to_int))
             self.sync_loop_control += 1
             self.speak_dialog("extend.sync", data={"sync_loop_control": self.sync_loop_control})
