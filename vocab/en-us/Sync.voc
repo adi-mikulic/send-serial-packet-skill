@@ -1,9 +1,23 @@
 sync
 sync byte
+sync bite
 sync nibble
 add sync
 add sync byte
+add sync bite
 add sync nibble
 set sync
 set sync byte
+set sync bite
 set sync nibble
+sink
+sink bite
+sink byte
+sink nibble
+add sink byte
+add sink bite
+add sink nibble
+set sink
+set sink byte
+set sink bite
+set sink nibble
