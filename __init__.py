@@ -35,7 +35,8 @@ class SendSerialPacketSkill(MycroftSkill):
 
         self.str_to_int = 0              # Variable used to convert string input to integer values
 
-        self.serial_packet = ''         # Complete data packet to send
+        self.serial_packet_str = ''
+        self.serial_packet               # Complete data packet to send
         self.ser = serial.Serial()
 
     @intent_handler(IntentBuilder("ProtocolIntent").require("Protocols").require("Format"))
@@ -91,12 +92,12 @@ class SendSerialPacketSkill(MycroftSkill):
 
     @intent_handler(IntentBuilder("BuildSerialPacketIntent").require("BuildSerial"))
     def handle_build_serial_packet_intent(self, message):
-        self.serial_packet = self.serial_packet + self.sync_bytes
-        self.serial_packet = self.serial_packet + self.comm_protocol
-        self.serial_packet = self.serial_packet + self.port
-        self.serial_packet = self.serial_packet + self.payload
+        self.serial_packet_str = self.serial_packet_str + self.sync_bytes
+        self.serial_packet_str = self.serial_packet_str + self.comm_protocol
+        self.serial_packet_str = self.serial_packet_str + self.port
+        self.serial_packet_str = self.serial_packet_str + self.payload
 
-        self.serial_packet = bytearray(self.serial_packet,'utf-8')
+        self.serial_packet = bytearray(self.serial_packet_str,'utf-8')
         self.ser.open()
         self.ser.write(self.serial_packet)
         self.speak_dialog("send.serial.data")
