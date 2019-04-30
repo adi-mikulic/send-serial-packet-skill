@@ -61,7 +61,7 @@ class SendSerialPacketSkill(MycroftSkill):
                 self.speak_dialog("extend.sync", data={"sync_loop_control": self.sync_loop_control})
             else:
                 self.sync_bytes = 'eb90'
-        elif len(self.syn_bytes) == 4:
+        elif len(self.sync_bytes) == 4:
             self.speak_dialog("limit.sync")
         self.speak_dialog("complete.sync", data={"sync_bytes": self.sync_bytes})
 
@@ -80,7 +80,7 @@ class SendSerialPacketSkill(MycroftSkill):
         self.ser.baudrate = 9600
         self.ser.port = 'COM1'
         self.speak_dialog("port.config", data={"port_name": self.ser.name})
-        
+
     @intent_handler(IntentBuilder("BuildSerialPacketIntent").require("BuildSerial"))
     def handle_build_serial_packet_intent(self, message):
         self.serial_packet += self.sync_bytes
