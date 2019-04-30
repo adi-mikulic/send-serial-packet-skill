@@ -1,4 +1,8 @@
 transmit data
+transmit serial data
 transmit packet
+transmit serial packet
 send data
+send serial data
 send packet
+send serial packet
