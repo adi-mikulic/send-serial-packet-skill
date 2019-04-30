@@ -36,7 +36,7 @@ class SendSerialPacketSkill(MycroftSkill):
         self.str_to_int = 0              # Variable used to convert string input to integer values
 
         self.serial_packet_str = ''
-        self.serial_packet               # Complete data packet to send
+        self.serial_packet = bytearray()              # Complete data packet to send
         self.ser = serial.Serial()
 
     @intent_handler(IntentBuilder("ProtocolIntent").require("Protocols").require("Format"))
