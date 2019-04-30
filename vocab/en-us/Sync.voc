@@ -1,4 +1,3 @@
-sync
 sync byte
 sync bite
 sync nibble
@@ -10,7 +9,6 @@ set sync
 set sync byte
 set sync bite
 set sync nibble
-sink
 sink bite
 sink byte
 sink nibble

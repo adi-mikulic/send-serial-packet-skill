@@ -53,24 +53,17 @@ class SendSerialPacketSkill(MycroftSkill):
 
     # The default sync byte will be 'EB 90'. If the user says the word "custom",
     # they will be prompted to configure the sync byte themselves.
-    @intent_handler(IntentBuilder("SyncBytesIntent").require("Sync").require("HexByte"))
+    @intent_handler(IntentBuilder("SyncBytesIntent").require("Selection").require("Sync").require("HexByte"))
     def handle_sync_byte_intent(self, message):
-        if self.sync_loop_control < 2:
-            # self.str_to_int = int(message.data["HexNum"],16)
-            # if self.str_to_int > 15:
-                # self.speak_dialog("nibble.warning")
-            # else:
-            self.sync_loop_control += 1
-            # self.sync_bytes = self.sync_bytes + hex(self.str_to_int).lstrip("0x")
-            self.sync_bytes = self.sync_bytes + message.data["HexByte"]
-            self.speak_dialog("extend.sync", data={"sync_loop_control": self.sync_loop_control})
+        if len(self.sync_bytes) < 4:
+            if message.data["Selection"] == "custom":
+                self.sync_bytes = self.sync_bytes + message.data["HexByte"]
+                self.speak_dialog("extend.sync", data={"sync_loop_control": self.sync_loop_control})
+            else:
+                self.sync_bytes = 'eb90'
+        elif len(self.syn_bytes) == 4:
+            self.speak_dialog("limit.sync")
         self.speak_dialog("complete.sync", data={"sync_bytes": self.sync_bytes})
-    
-    @intent_handler(IntentBuilder("PortSelectIntent").require("PortName"))
-    def handle_port_select_intent(self, message):
-        self.ser.baudrate = 9600
-        self.ser.port = 'COM1'
-        self.speak_dialog("port.config", data={"port_name": self.ser.name})
 
     @intent_handler(IntentBuilder("PayloadConfigIntent").require("Payload").require("HexByte"))
     def handle_payload_select_intent(self, message):
@@ -81,7 +74,13 @@ class SendSerialPacketSkill(MycroftSkill):
             self.payload = self.payload + hex(self.str_to_int).lstrip("0x")
             self.speak_dialog("extend.payload", data={"payload_loop_control": self.payload_loop_control})
         self.speak_dialog("complete.payload", data={"payload": self.payload})
-    
+
+    @intent_handler(IntentBuilder("PortSelectIntent").require("PortName"))
+    def handle_port_select_intent(self, message):
+        self.ser.baudrate = 9600
+        self.ser.port = 'COM1'
+        self.speak_dialog("port.config", data={"port_name": self.ser.name})
+        
     @intent_handler(IntentBuilder("BuildSerialPacketIntent").require("BuildSerial"))
     def handle_build_serial_packet_intent(self, message):
         self.serial_packet += self.sync_bytes
