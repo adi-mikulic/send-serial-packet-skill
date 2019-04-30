@@ -53,6 +53,7 @@ class SendSerialPacketSkill(MycroftSkill):
 
     # The default sync byte will be 'EB 90'. If the user says the word "custom",
     # they will be prompted to configure the sync byte themselves.
+<<<<<<< HEAD
     @intent_handler(IntentBuilder("SyncBytesIntent").require("Sync").require("HexNum"))
     def handle_sync_byte_intent(self, message):
         if self.sync_loop_control < 4:
@@ -62,6 +63,18 @@ class SendSerialPacketSkill(MycroftSkill):
             else:
                 self.sync_loop_control += 1
                 self.sync_bytes = self.sync_bytes + hex(self.str_to_int).lstrip("0x")
+=======
+    @intent_handler(IntentBuilder("SyncBytesIntent").require("Sync").require("HexByte"))
+    def handle_sync_byte_intent(self, message):
+        if self.sync_loop_control < 2:
+            # self.str_to_int = int(message.data["HexNum"],16)
+            # if self.str_to_int > 15:
+                # self.speak_dialog("nibble.warning")
+            # else:
+            self.sync_loop_control += 1
+            # self.sync_bytes = self.sync_bytes + hex(self.str_to_int).lstrip("0x")
+            self.sync_bytes = self.sync_bytes + message.data["HexByte"]
+>>>>>>> 5210c2658204353dde77b3f9074740b1e7cfe223
             self.speak_dialog("extend.sync", data={"sync_loop_control": self.sync_loop_control})
         self.speak_dialog("complete.sync", data={"sync_bytes": self.sync_bytes})
     
