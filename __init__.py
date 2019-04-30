@@ -24,7 +24,7 @@ class SendSerialPacketSkill(MycroftSkill):
         # Initialize working variables used within the skill.
         # PYTHON_NOTE: Arrays do not exist within python, instead a data
         # structure known as a "list" has similar functionality.
-        #
+
         self.payload = ''               # Message payload
         self.payload_size = 10          # Size of the payload in bytes
         self.payload_loop_control = 0
@@ -39,18 +39,6 @@ class SendSerialPacketSkill(MycroftSkill):
         self.serial_packet = ''         # Complete data packet to send
         self.ser = serial.Serial()
 
-    # The "handle_xxxx_intent" function is triggered by Mycroft when the
-    # skill's intent is matched.  The intent is defined by the IntentBuilder()
-    # pieces, and is triggered when the user's utterance matches the pattern
-    # defined by the keywords.  In this case, the match occurs when one word
-    # is found from each of the files:
-    #    vocab/en-us/Hello.voc
-    #    vocab/en-us/World.voc
-    # In this example that means it would match on utterances like:
-    #   'Hello world'
-    #   'Howdy you great big world'
-    #   'Greetings planet earth'
-
     @intent_handler(IntentBuilder("ProtocolIntent").require("Protocols").require("Format"))
     def handle_select_protocol_intent(self, message):
         if message.data["Format"] == "spi":
@@ -63,12 +51,14 @@ class SendSerialPacketSkill(MycroftSkill):
             self.comm_protocol = '00'
         self.speak_dialog("selected.protocol", data={"comm_protocol": self.comm_protocol})
 
+    # The default sync byte will be 'EB 90'. If the user says the word "custom",
+    # they will be prompted to configure the sync byte themselves.
     @intent_handler(IntentBuilder("SyncBytesIntent").require("Sync").require("HexNum"))
     def handle_sync_byte_intent(self, message):
         if self.sync_loop_control < 4:
             self.str_to_int = int(message.data["HexNum"],16)
-            if self.str_to_int > 9:
-                self.speak_dialog("nibble.prompt")
+            if self.str_to_int > 15:
+                self.speak_dialog("nibble.warning")
             else:
                 self.sync_loop_control += 1
                 self.sync_bytes = self.sync_bytes + hex(self.str_to_int).lstrip("0x")
@@ -103,6 +93,8 @@ class SendSerialPacketSkill(MycroftSkill):
         self.ser.write(self.serial_packet)
         self.speak_dialog("send.serial.data")
         self.ser.close()
+    
+    # TEST ENCRYPTION OF PAYLOAD
 
     # The "stop" method defines what Mycroft does when told to stop during
     # the skill's execution. In this case, since the skill's functionality
