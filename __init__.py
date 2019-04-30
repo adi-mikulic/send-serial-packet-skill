@@ -31,8 +31,7 @@ class SendSerialPacketSkill(MycroftSkill):
         self.comm_protocol = ''         # User-selected communication protocol identifier
         self.port = '01'                  # User or system selected port to transmit data
 
-        self.sync_bytes = ''            # Sync bytes (if necessary)
-        self.sync_loop_control = 0
+        self.sync_bytes = ''            # Sync bytes
 
         self.str_to_int = 0              # Variable used to convert string input to integer values
 
@@ -67,13 +66,22 @@ class SendSerialPacketSkill(MycroftSkill):
 
     @intent_handler(IntentBuilder("PayloadConfigIntent").require("Payload").require("HexByte"))
     def handle_payload_select_intent(self, message):
-        self.str_to_int = 0
         if self.payload_loop_control < self.payload_size:
             self.payload_loop_control += 1
-            self.str_to_int = int(message.data["HexByte"],16)
-            self.payload = self.payload + hex(self.str_to_int).lstrip("0x")
+            self.payload = self.payload + message.data["HexByte"]
             self.speak_dialog("extend.payload", data={"payload_loop_control": self.payload_loop_control})
         self.speak_dialog("complete.payload", data={"payload": self.payload})
+
+    @intent_handler(IntentBuilder("PadVarIntent").require("Pad").require("Var"))
+    def handle_pad_var_intent(self, message):
+        if message.data["Var"] == "payload":
+            while len(self.payload) < 20:
+                self.payload = self.payload + '00'
+            self.speak_dialog("complete.payload", data={"payload": self.payload})
+        else:
+            while len(self.sync_bytes) < 4:
+                self.sync_bytes = self.sync_bytes + '00'
+            self.speak_dialog("complete.sync", data={"sync_bytes": self.sync_bytes})
 
     @intent_handler(IntentBuilder("PortSelectIntent").require("PortName"))
     def handle_port_select_intent(self, message):
@@ -96,16 +104,8 @@ class SendSerialPacketSkill(MycroftSkill):
     
     # TEST ENCRYPTION OF PAYLOAD
 
-    # The "stop" method defines what Mycroft does when told to stop during
-    # the skill's execution. In this case, since the skill's functionality
-    # is extremely simple, there is no need to override it.  If you DO
-    # need to implement stop, you should return True to indicate you handled
-    # it.
-    #
     def stop(self):
         return True
 
-# The "create_skill()" method is used to create an instance of the skill.
-# Note that it's outside the class itself.
 def create_skill():
     return SendSerialPacketSkill()
