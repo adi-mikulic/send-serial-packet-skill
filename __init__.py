@@ -87,7 +87,7 @@ class SendSerialPacketSkill(MycroftSkill):
     @intent_handler(IntentBuilder("PortSelectIntent").require("PortName"))
     def handle_port_select_intent(self, message):
         self.ser.baudrate = 9600
-        self.ser.port = 'COM1'
+        self.ser.port = '/dev/ttyS0'
         self.speak_dialog("port.config", data={"port_name": self.ser.name})
 
     @intent_handler(IntentBuilder("BuildSerialPacketIntent").require("BuildSerial"))
