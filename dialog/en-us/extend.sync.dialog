@@ -1,1 +1,1 @@
-You have added {{sync_loop_control}} nibble(s) to your sync byte. Four nibbles are expected. Please continue to add a nibble until all four are obtained.
+You have added {{sync_loop_control}} bytes to your sync byte. Two bytes are expected.
